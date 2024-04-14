@@ -1,4 +1,4 @@
-package com.study.apisistemaeducacional.Controller.dto;
+package com.study.apisistemaeducacional.Controller;
 
 import com.study.apisistemaeducacional.Entity.DocenteEntity;
 import com.study.apisistemaeducacional.Service.DocenteService;
