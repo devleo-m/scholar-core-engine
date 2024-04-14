@@ -1,28 +1,26 @@
 package com.study.apisistemaeducacional.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "docente")
 public class DocenteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_docente;
+    private Long id;
 
-    private String nome_docente;
+    private String nome;
 
     @Temporal(TemporalType.DATE)
-    private Date data_entrada;
+    private Date dataEntrada;
 
-    @Column(unique = true)
-    private Long id_usuario;
-
+    @ManyToOne
+    private UsuarioEntity usuario;
 }
