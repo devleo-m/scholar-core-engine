@@ -1,4 +1,5 @@
 package com.study.apisistemaeducacional.Controller.dto.response;
 
-public record LoginResponse (String valorJWT, long tempoExpiracao) {
-}
+import com.study.apisistemaeducacional.Entity.PapelEntity;
+
+public record LoginResponse (String name, PapelEntity papel, String token) {}
