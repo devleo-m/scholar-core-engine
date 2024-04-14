@@ -65,7 +65,7 @@ public class DocenteServiceImpl implements DocenteService {
     public DocenteEntity atualizarDocente(Long id, DocenteEntity docente){
         log.info("Atualizando docente pelo ID: {}", id);
         verificarExistenciaDocente(id);
-        docente.setId_docente(id);
+        docente.setId(id);
         return docenteRepository.save(docente);
     }
 
