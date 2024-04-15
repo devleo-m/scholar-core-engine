@@ -18,3 +18,11 @@ CREATE TABLE IF NOT EXISTS docente (
     id_usuario BIGINT NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id)
 );
+
+CREATE TABLE IF NOT EXISTS aluno (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+);
