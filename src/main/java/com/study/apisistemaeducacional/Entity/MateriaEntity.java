@@ -23,5 +23,5 @@ public class MateriaEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_curso", referencedColumnName = "id")
-    private UsuarioEntity id_curso;
+    private CursoEntity id_curso;
 }
