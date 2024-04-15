@@ -3,6 +3,7 @@ package com.study.apisistemaeducacional.Service.Impl;
 import com.study.apisistemaeducacional.Entity.DocenteEntity;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
 import com.study.apisistemaeducacional.Repository.DocenteRepository;
+import com.study.apisistemaeducacional.Security.TokenService;
 import com.study.apisistemaeducacional.Service.DocenteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,8 @@ import java.util.Optional;
 @Service
 public class DocenteServiceImpl implements DocenteService {
 
-    DocenteRepository docenteRepository;
+    private final DocenteRepository docenteRepository;
+    private final TokenService tokenService;
 
     /**
      * Método para criar Docente.
@@ -71,8 +73,10 @@ public class DocenteServiceImpl implements DocenteService {
 
     /**
      * Deleta um aluno existente.
-     *.@verificarExistenciaDocente metodo para verificar se o docente existe
+     * .@verificarExistenciaDocente metodo para verificar se o docente existe
+     *
      * @param id ID do aluno a ser deletado.
+     * @return
      */
     @Override
     public void deletarDocente(Long id) {

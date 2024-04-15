@@ -19,8 +19,10 @@ public class DocenteEntity {
     private String nome;
 
     @Temporal(TemporalType.DATE)
+    @Column(name = "data_entrada")
     private Date dataEntrada;
 
     @ManyToOne
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private UsuarioEntity usuario;
 }
