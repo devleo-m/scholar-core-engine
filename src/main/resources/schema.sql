@@ -31,3 +31,12 @@ CREATE TABLE IF NOT EXISTS curso (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(150) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS turma (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    id_docente BIGINT NOT NULL,
+    id_curso BIGINT NOT NULL,
+    FOREIGN KEY (id_docente) REFERENCES docente(id),
+    FOREIGN KEY (id_curso) REFERENCES curso(id)
+);
