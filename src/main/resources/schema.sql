@@ -10,3 +10,11 @@ CREATE TABLE IF NOT EXISTS usuario (
     papel_id BIGINT NOT NULL,
     FOREIGN KEY (papel_id) REFERENCES papel(id)
 );
+
+CREATE TABLE IF NOT EXISTS docente (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    data_entrada DATE DEFAULT NOW(),
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+);
