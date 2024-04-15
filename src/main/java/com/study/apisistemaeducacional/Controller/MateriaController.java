@@ -1,12 +1,15 @@
 package com.study.apisistemaeducacional.Controller;
 
 import com.study.apisistemaeducacional.Entity.MateriaEntity;
+import com.study.apisistemaeducacional.Entity.TurmaEntity;
 import com.study.apisistemaeducacional.Service.MateriaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -71,5 +74,18 @@ public class MateriaController {
         materiaService.deletarMateria(id);
         log.debug("DELETE /api/materias/{} -> materia deletada com sucesso", id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Endpoint para listar todas as materias.
+     *
+     * @return todas materias criadas.
+     */
+    @GetMapping
+    public ResponseEntity<List<MateriaEntity>> listarDocentes() {
+        log.info("GET /api/materias -> Listando todas as materias");
+        List<MateriaEntity> materias = materiaService.listarTodasMaterias();
+        log.debug("GET /api/materias -> Total de materias encontradas: {}", materias.size());
+        return ResponseEntity.status(HttpStatus.OK).body(materias);
     }
 }
