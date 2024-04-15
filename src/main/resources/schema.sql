@@ -40,3 +40,10 @@ CREATE TABLE IF NOT EXISTS turma (
     FOREIGN KEY (id_docente) REFERENCES docente(id),
     FOREIGN KEY (id_curso) REFERENCES curso(id)
 );
+
+CREATE TABLE IF NOT EXISTS materia (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    id_curso BIGINT NOT NULL,
+    FOREIGN KEY (id_curso) REFERENCES curso(id)
+);
