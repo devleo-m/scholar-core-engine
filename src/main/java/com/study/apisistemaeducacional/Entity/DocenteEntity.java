@@ -25,4 +25,12 @@ public class DocenteEntity {
     @ManyToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private UsuarioEntity usuario;
+
+    public UsuarioEntity getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
+    }
 }
