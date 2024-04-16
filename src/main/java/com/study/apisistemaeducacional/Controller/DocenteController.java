@@ -1,6 +1,11 @@
 package com.study.apisistemaeducacional.Controller;
 
+import com.study.apisistemaeducacional.Controller.dto.request.CriarDocenteRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.CriarDocenteResponse;
 import com.study.apisistemaeducacional.Entity.DocenteEntity;
+import com.study.apisistemaeducacional.Entity.UsuarioEntity;
+import com.study.apisistemaeducacional.Repository.DocenteRepository;
+import com.study.apisistemaeducacional.Repository.UsuarioRepository;
 import com.study.apisistemaeducacional.Service.DocenteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -16,19 +24,22 @@ import java.util.List;
 @RequestMapping("/api/docentes")
 public class DocenteController {
     private final DocenteService docenteService;
+    private final UsuarioRepository usuarioRepository;
 
     /**
      * Endpoint para criar um novo docente.
      *
-     * @param docente O docente a ser adicionado.
+     * @param request O docente a ser adicionado.
      * @return O docente criado.
      */
     @PostMapping
-    public ResponseEntity<DocenteEntity> criarDocente(@RequestBody DocenteEntity docente) {
-        log.info("POST /api/docentes -> Adicionando novo Docente: {}", docente);
-        DocenteEntity novoDocente = docenteService.criarDocente(docente);
-        log.debug("POST /api/docentes -> Novo Docente adicionada: {}", novoDocente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoDocente);
+    public ResponseEntity<CriarDocenteResponse> criarDocente(@RequestBody CriarDocenteRequest request) {
+        log.info("POST /api/docentes -> Adicionando novo Docente: {}", request);
+
+        CriarDocenteResponse response = docenteService.criarDocente(request);
+
+        log.debug("POST /api/docentes -> Novo Docente adicionado: {}", response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -38,12 +49,13 @@ public class DocenteController {
      * @return O docente encontrado.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<DocenteEntity> obterDocentePorId(@PathVariable Long id) {
+    public ResponseEntity<CriarDocenteResponse> obterDocentePorId(@PathVariable Long id) {
         log.info("GET /api/docentes/{} -> Obtendo docentes por ID", id);
-        DocenteEntity disciplina = docenteService.obterDocentePorId(id);
-        log.debug("GET /api/docentes/{} -> docente encontrado: {}", id, disciplina);
-        return ResponseEntity.status(HttpStatus.OK).body(disciplina);
+        CriarDocenteResponse docente = docenteService.obterDocentePorId(id);
+        log.debug("GET /api/docentes/{} -> docente encontrado: {}", id, docente);
+        return ResponseEntity.status(HttpStatus.OK).body(docente);
     }
+
 
     /**
      * Endpoint para atualizar um docente pelo ID.
