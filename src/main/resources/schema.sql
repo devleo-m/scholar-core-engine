@@ -47,3 +47,15 @@ CREATE TABLE IF NOT EXISTS materia (
     id_curso BIGINT NOT NULL,
     FOREIGN KEY (id_curso) REFERENCES curso(id)
 );
+
+CREATE TABLE IF NOT EXISTS nota (
+    id BIGSERIAL PRIMARY KEY,
+    valor NUMERIC(5,2) NOT NULL DEFAULT 0.00,
+    data_nota DATE DEFAULT NOW(),
+    id_docente BIGINT NOT NULL,
+    id_aluno BIGINT NOT NULL,
+    id_materia BIGINT NOT NULL,
+    FOREIGN KEY (id_docente) REFERENCES docente(id),
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id),
+    FOREIGN KEY (id_materia) REFERENCES materia(id)
+);
