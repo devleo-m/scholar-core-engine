@@ -1,14 +1,19 @@
 package com.study.apisistemaeducacional.Service.Impl;
 
+import com.study.apisistemaeducacional.Controller.dto.request.CriarDocenteRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.CriarDocenteResponse;
 import com.study.apisistemaeducacional.Entity.DocenteEntity;
+import com.study.apisistemaeducacional.Entity.UsuarioEntity;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
 import com.study.apisistemaeducacional.Repository.DocenteRepository;
+import com.study.apisistemaeducacional.Repository.UsuarioRepository;
 import com.study.apisistemaeducacional.Security.TokenService;
 import com.study.apisistemaeducacional.Service.DocenteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,17 +23,33 @@ import java.util.Optional;
 public class DocenteServiceImpl implements DocenteService {
 
     private final DocenteRepository docenteRepository;
-    private final TokenService tokenService;
+    private final UsuarioRepository usuarioRepository;
 
     /**
      * Método para criar Docente.
-     * @param docente O docente a ser adicionado.
+     * //@param docente O docente a ser adicionado.
      * @return docente criado.
      */
     @Override
-    public DocenteEntity criarDocente(DocenteEntity docente) {
-        log.info("Criando novo docente: {}", docente);
-        return docenteRepository.save(docente);
+    public CriarDocenteResponse criarDocente(CriarDocenteRequest request) {
+        log.info("Criando novo docente: {}", request);
+
+        // Busca o UsuarioEntity pelo id
+        UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // Converte o DTO de entrada para a entidade Docente
+        DocenteEntity docente = new DocenteEntity();
+        docente.setNome(request.nome());
+        docente.setUsuario(usuario); // Define o UsuarioEntity
+
+        // Salva o docente no banco de dados
+        DocenteEntity savedDocente = docenteRepository.save(docente);
+
+        // Converte a entidade Docente salva para o DTO de resposta
+        CriarDocenteResponse response = new CriarDocenteResponse(savedDocente.getId(), savedDocente.getNome(), savedDocente.getUsuario().getPapel().getNome());
+
+        return response;
     }
 
     /**
@@ -38,14 +59,20 @@ public class DocenteServiceImpl implements DocenteService {
      * @throws NotFoundException Se o aluno não for encontrado.
      */
     @Override
-    public DocenteEntity obterDocentePorId(Long id) {
-        log.info("Obtendo aluno por ID: {}", id);
-        Optional<DocenteEntity> DocenteOptional = docenteRepository.findById(id);
-        return DocenteOptional.orElseThrow(() -> {
+    public CriarDocenteResponse obterDocentePorId(Long id) {
+        log.info("Obtendo docente por ID: {}", id);
+        Optional<DocenteEntity> docenteOptional = docenteRepository.findById(id);
+        DocenteEntity docente = docenteOptional.orElseThrow(() -> {
             log.warn("Docente não encontrado pelo ID: {}", id);
             return new NotFoundException("Docente não encontrado com o ID: " + id);
         });
+
+        // Converte a entidade Docente para o DTO de resposta
+        CriarDocenteResponse response = new CriarDocenteResponse(docente.getId(), docente.getNome(), docente.getUsuario().getPapel().getNome());
+
+        return response;
     }
+
 
     /**
      * Método para listar todos os Docentes.
