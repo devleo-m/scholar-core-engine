@@ -1,5 +1,7 @@
 package com.study.apisistemaeducacional.Controller;
 
+import com.study.apisistemaeducacional.Controller.dto.request.MateriaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.MateriaResponse;
 import com.study.apisistemaeducacional.Entity.MateriaEntity;
 import com.study.apisistemaeducacional.Entity.TurmaEntity;
 import com.study.apisistemaeducacional.Service.MateriaService;
@@ -22,13 +24,13 @@ public class MateriaController {
     /**
      * Endpoint para criar um nova materia.
      *
-     * @param materia para adicionar a nova materia.
+     * @param request para adicionar a nova materia.
      * @return A materia criado.
      */
     @PostMapping
-    public ResponseEntity<MateriaEntity> criarMateria(@RequestBody MateriaEntity materia) {
-        log.info("POST /api/Materias -> Adicionando nova Materia: {}", materia);
-        MateriaEntity novaMateria = materiaService.criarMateria(materia);
+    public ResponseEntity<MateriaResponse> criarMateria(@RequestBody MateriaRequest request) {
+        log.info("POST /api/Materias -> Adicionando nova Materia: {}", request);
+        MateriaResponse novaMateria = materiaService.criarMateria(request);
         log.debug("POST /api/Materias -> Nova Materia adicionada: {}", novaMateria);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaMateria);
     }
@@ -40,9 +42,9 @@ public class MateriaController {
      * @return A Materia encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MateriaEntity> obterMateriaPorId(@PathVariable Long id) {
+    public ResponseEntity<MateriaResponse> obterMateriaPorId(@PathVariable Long id) {
         log.info("GET /api/Materias/{} -> Obtendo Materia por ID", id);
-        MateriaEntity materia = materiaService.obterMateriaPorId(id);
+        MateriaResponse materia = materiaService.obterMateriaPorId(id);
         log.debug("GET /api/Materias/{} -> Materia encontrada: {}", id, materia);
         return ResponseEntity.status(HttpStatus.OK).body(materia);
     }
@@ -51,15 +53,15 @@ public class MateriaController {
      * Endpoint para atualizar uma materia pelo ID.
      *
      * @param id O ID da materia a ser obtido.
-     * @param materiaAtualizada parametro que sera atualizado
+     * @param request parametro que sera atualizado
      * @return a materia nova atualizado.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MateriaEntity> atualizarMateria(@PathVariable Long id, @RequestBody MateriaEntity materiaAtualizada) {
+    public ResponseEntity<MateriaResponse> atualizarMateria(@PathVariable Long id, @RequestBody MateriaRequest request) {
         log.info("PUT /api/turmas/{} -> Atualizando Turma com o ID: {}", id, id);
-        MateriaEntity materia = materiaService.atualizarMateria(id, materiaAtualizada);
-        log.debug("PUT /api/turmas/{} -> Turma atualizado: {}", id, materia);
-        return ResponseEntity.status(HttpStatus.OK).body(materia);
+        MateriaResponse novaMateria = materiaService.atualizarMateria(id, request);
+        log.debug("PUT /api/turmas/{} -> Turma atualizado: {}", id, novaMateria);
+        return ResponseEntity.status(HttpStatus.OK).body(novaMateria);
     }
 
     /**
@@ -82,9 +84,9 @@ public class MateriaController {
      * @return todas materias criadas.
      */
     @GetMapping
-    public ResponseEntity<List<MateriaEntity>> listarDocentes() {
+    public ResponseEntity<List<MateriaResponse>> listarDocentes() {
         log.info("GET /api/materias -> Listando todas as materias");
-        List<MateriaEntity> materias = materiaService.listarTodasMaterias();
+        List<MateriaResponse> materias = materiaService.listarTodasMaterias();
         log.debug("GET /api/materias -> Total de materias encontradas: {}", materias.size());
         return ResponseEntity.status(HttpStatus.OK).body(materias);
     }

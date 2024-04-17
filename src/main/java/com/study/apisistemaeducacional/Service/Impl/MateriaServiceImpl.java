@@ -1,32 +1,57 @@
 package com.study.apisistemaeducacional.Service.Impl;
 
+import com.study.apisistemaeducacional.Controller.dto.request.MateriaRequest;
+import com.study.apisistemaeducacional.Controller.dto.request.TurmaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.MateriaResponse;
+import com.study.apisistemaeducacional.Controller.dto.response.TurmaResponse;
+import com.study.apisistemaeducacional.Entity.CursoEntity;
 import com.study.apisistemaeducacional.Entity.MateriaEntity;
+import com.study.apisistemaeducacional.Entity.TurmaEntity;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
+import com.study.apisistemaeducacional.Repository.CursoRepository;
 import com.study.apisistemaeducacional.Repository.MateriaRepository;
 import com.study.apisistemaeducacional.Service.MateriaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class MateriaServiceImpl implements MateriaService {
     private final MateriaRepository materiaRepository;
+    private final CursoRepository cursoRepository;
 
     /**
      * Método para criar materia.
      *
-     * @param materia a ser adicionado.
+     * @param request a ser adicionado.
      * @return materia criada.
      */
     @Override
-    public MateriaEntity criarMateria(MateriaEntity materia) {
-        log.info("Criando nova materia: {}", materia);
-        return materiaRepository.save(materia);
+    public MateriaResponse criarMateria(MateriaRequest request) {
+        log.info("Criando nova materia: {}", request);
+
+        CursoEntity curso = cursoRepository.findById(request.cursoId())
+                .orElseThrow(() -> new NotFoundException("Curso nao encontrado"));
+
+        MateriaEntity materiaEntity = new MateriaEntity();
+            materiaEntity.setNome(request.nomeMateria());
+            materiaEntity.setId_curso(curso);
+
+        MateriaEntity turma = materiaRepository.save(materiaEntity);
+
+        MateriaResponse response = new MateriaResponse(
+                turma.getId(),
+                turma.getNome(),
+                turma.getId_curso().getNome()
+        );
+        return response;
     }
 
     /**
@@ -37,29 +62,53 @@ public class MateriaServiceImpl implements MateriaService {
      * @throws NotFoundException Se a materia não for encontrado.
      */
     @Override
-    public MateriaEntity obterMateriaPorId(Long id) {
+    public MateriaResponse obterMateriaPorId(Long id) {
         log.info("Obtendo materia por ID: {}", id);
         Optional<MateriaEntity> materiaOptional = materiaRepository.findById(id);
-        return materiaOptional.orElseThrow(() -> {
-            log.warn("materia não encontrada pelo ID: {}", id);
-            return new NotFoundException("materia não encontrada com o ID: " + id);
+        MateriaEntity materia = materiaOptional.orElseThrow(() -> {
+            log.warn("Materia não encontrada pelo ID: {}", id);
+            return new NotFoundException("Materia não encontrada com o ID: " + id);
         });
+        MateriaResponse response = new MateriaResponse(
+                materia.getId(),
+                materia.getNome(),
+                materia.getId_curso().getNome()
+        );
+        return response;
     }
 
     /**
      * Método para atualizar materia pelo id.
      *
      * @param id id da materia para ser atualizado
-     * @param materia atributos novos da materia
+     * @param request atributos novos da materia
      * @verificarExistenciaDocente metodo para verificar se a materia existe
      * @return a materia atualizada
      */
     @Override
-    public MateriaEntity atualizarMateria(Long id, MateriaEntity materia) {
+    public MateriaResponse atualizarMateria(Long id, MateriaRequest request) {
         log.info("Atualizando materia pelo ID: {}", id);
         verificarExistenciaMateria(id);
-        materia.setId(id);
-        return materiaRepository.save(materia);
+
+        CursoEntity curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Curso nao encontrado"));
+
+        MateriaEntity materiaEntity = materiaRepository.findById(id)
+                .orElseThrow(() -> {
+                        log.warn("Aluno não encontrado pelo ID: {}", id);
+                            throw new NotFoundException("Aluno não encontrado com o ID: " + id);
+                });
+
+        materiaEntity.setNome(request.nomeMateria());
+        materiaEntity.setId_curso(curso);
+
+        MateriaEntity materia = materiaRepository.save(materiaEntity);
+
+        return new MateriaResponse(
+                materia.getId(),
+                materia.getNome(),
+                materia.getId_curso().getNome()
+        );
     }
 
     /**
@@ -68,9 +117,16 @@ public class MateriaServiceImpl implements MateriaService {
      * @return Lista de todas as materias.
      */
     @Override
-    public List<MateriaEntity> listarTodasMaterias() {
+    public List<MateriaResponse> listarTodasMaterias() {
         log.info("Listando todas as materias!");
-        return materiaRepository.findAll();
+        List<MateriaEntity> materias = materiaRepository.findAll();
+        List<MateriaResponse> materiaResponses = materias.stream()
+                .map(materia -> new MateriaResponse(
+                        materia.getId(),
+                        materia.getNome(),
+                        materia.getId_curso().getNome()))
+                .collect(Collectors.toList());
+        return materiaResponses;
     }
 
     /**
