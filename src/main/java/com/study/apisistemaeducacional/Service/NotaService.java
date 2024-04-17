@@ -1,13 +1,16 @@
 package com.study.apisistemaeducacional.Service;
 
+import com.study.apisistemaeducacional.Controller.dto.request.NotaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.NotaPorAlunoResponse;
+import com.study.apisistemaeducacional.Controller.dto.response.NotaResponse;
 import com.study.apisistemaeducacional.Entity.NotaEntity;
 
 import java.util.List;
 
 public interface NotaService {
-    List<NotaEntity> listarNotaPorAluno(Long id);
-    NotaEntity criarNota(NotaEntity nota);
-    NotaEntity obterNotaPorId(Long id);
-    NotaEntity atualizarNota(Long id, NotaEntity nota);
+    List<NotaPorAlunoResponse> listarNotaPorAluno(Long id);
+    NotaResponse criarNota(NotaRequest request);
+    NotaResponse obterNotaPorId(Long id);
+    NotaResponse atualizarNota(Long id, NotaRequest request);
     void deletarNota(Long id);
 }
