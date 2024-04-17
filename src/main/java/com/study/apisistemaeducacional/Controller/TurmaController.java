@@ -1,7 +1,7 @@
 package com.study.apisistemaeducacional.Controller;
 
-import com.study.apisistemaeducacional.Entity.DocenteEntity;
-import com.study.apisistemaeducacional.Entity.TurmaEntity;
+import com.study.apisistemaeducacional.Controller.dto.request.TurmaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.TurmaResponse;
 import com.study.apisistemaeducacional.Service.TurmaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +26,9 @@ public class TurmaController {
      * @return A turma criado.
      */
     @PostMapping
-    public ResponseEntity<TurmaEntity> criarTurma(@RequestBody TurmaEntity turma) {
+    public ResponseEntity<TurmaResponse> criarTurma(@RequestBody TurmaRequest turma) {
         log.info("POST /api/Turmas -> Adicionando nova Turma: {}", turma);
-        TurmaEntity novoTurma = turmaService.criarTurma(turma);
+        TurmaResponse novoTurma = turmaService.criarTurma(turma);
         log.debug("POST /api/Turmas -> Nova Turma adicionada: {}", novoTurma);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoTurma);
     }
@@ -40,9 +40,9 @@ public class TurmaController {
      * @return A turma encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TurmaEntity> obterTurmaPorId(@PathVariable Long id) {
+    public ResponseEntity<TurmaResponse> obterTurmaPorId(@PathVariable Long id) {
         log.info("GET /api/turmas/{} -> Obtendo turma por ID", id);
-        TurmaEntity turma = turmaService.obterTurmaPorId(id);
+        TurmaResponse turma = turmaService.obterTurmaPorId(id);
         log.debug("GET /api/turmas/{} -> turma encontrada: {}", id, turma);
         return ResponseEntity.status(HttpStatus.OK).body(turma);
     }
@@ -51,15 +51,15 @@ public class TurmaController {
      * Endpoint para atualizar uma turma pelo ID.
      *
      * @param id O ID da turma a ser obtido.
-     * @param turmaAtualizada parametro que sera atualizado
+     * @param request parametro que sera atualizado
      * @return a turma nova atualizado.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<TurmaEntity> atualizarTurma(@PathVariable Long id, @RequestBody TurmaEntity turmaAtualizada) {
+    public ResponseEntity<TurmaResponse> atualizarTurma(@PathVariable Long id, @RequestBody TurmaRequest request) {
         log.info("PUT /api/turmas/{} -> Atualizando Turma com o ID: {}", id, id);
-        TurmaEntity turma = turmaService.atualizarTurma(id, turmaAtualizada);
-        log.debug("PUT /api/turmas/{} -> Turma atualizado: {}", id, turma);
-        return ResponseEntity.status(HttpStatus.OK).body(turma);
+        TurmaResponse turmaNova = turmaService.atualizarTurma(id, request);
+        log.debug("PUT /api/turmas/{} -> Turma atualizado: {}", id, turmaNova);
+        return ResponseEntity.status(HttpStatus.OK).body(turmaNova);
     }
 
     /**
@@ -82,9 +82,9 @@ public class TurmaController {
      * @return todas turmas criadas.
      */
     @GetMapping
-    public ResponseEntity<List<TurmaEntity>> listarDocentes() {
+    public ResponseEntity<List<TurmaResponse>> listarDocentes() {
         log.info("GET /api/turmas -> Listando todas as turmas");
-        List<TurmaEntity> turma = turmaService.listarTodasTurmas();
+        List<TurmaResponse> turma = turmaService.listarTodasTurmas();
         log.debug("GET /api/turmas -> Total de turmas encontradas: {}", turma.size());
         return ResponseEntity.status(HttpStatus.OK).body(turma);
     }
