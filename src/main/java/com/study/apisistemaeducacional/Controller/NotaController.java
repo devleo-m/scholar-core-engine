@@ -1,5 +1,8 @@
 package com.study.apisistemaeducacional.Controller;
 
+import com.study.apisistemaeducacional.Controller.dto.request.NotaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.NotaPorAlunoResponse;
+import com.study.apisistemaeducacional.Controller.dto.response.NotaResponse;
 import com.study.apisistemaeducacional.Entity.NotaEntity;
 import com.study.apisistemaeducacional.Service.NotaService;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +26,9 @@ public class NotaController {
      * @return todas as notas criadas por aluno.
      */
     @GetMapping("/aluno/{id}")
-    public ResponseEntity<List<NotaEntity>> listarNotasPorAluno(@PathVariable Long id) {
+    public ResponseEntity<List<NotaPorAlunoResponse>> listarNotasPorAluno(@PathVariable Long id) {
         log.info("GET /api/notas -> Listando todas as notas por aluno");
-        List<NotaEntity> notas = notaService.listarNotaPorAluno(id);
+        List<NotaPorAlunoResponse> notas = notaService.listarNotaPorAluno(id);
         log.debug("GET /api/notas -> Total de notas encontradas por aluno: {}", notas.size());
         return ResponseEntity.status(HttpStatus.OK).body(notas);
     }
@@ -33,13 +36,13 @@ public class NotaController {
     /**
      * Endpoint para criar um nova nota.
      *
-     * @param nota para adicionar uma nova nota.
+     * @param  request adicionar uma nova nota.
      * @return A nota criado.
      */
     @PostMapping
-    public ResponseEntity<NotaEntity> criarNota(@RequestBody NotaEntity nota) {
-        log.info("POST /api/notas -> Adicionando nova nota: {}", nota);
-        NotaEntity novoNota = notaService.criarNota(nota);
+    public ResponseEntity<NotaResponse> criarNota(@RequestBody NotaRequest request) {
+        log.info("POST /api/notas -> Adicionando nova nota: {}", request);
+        NotaResponse novoNota = notaService.criarNota(request);
         log.debug("POST /api/notas -> Nova nota adicionada: {}", novoNota);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoNota);
     }
@@ -51,9 +54,9 @@ public class NotaController {
      * @return A nota encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<NotaEntity> obterNotaPorId(@PathVariable Long id) {
+    public ResponseEntity<NotaResponse> obterNotaPorId(@PathVariable Long id) {
         log.info("GET /api/notas/{} -> Obtendo nota por ID", id);
-        NotaEntity nota = notaService.obterNotaPorId(id);
+        NotaResponse nota = notaService.obterNotaPorId(id);
         log.debug("GET /api/notas/{} -> nota encontrada: {}", id, nota);
         return ResponseEntity.status(HttpStatus.OK).body(nota);
     }
@@ -62,15 +65,15 @@ public class NotaController {
      * Endpoint para atualizar uma nota pelo ID.
      *
      * @param id O ID da nota a ser obtido.
-     * @param notaAtualizada parametro que sera atualizado
+     * @param request parametro que sera atualizado
      * @return a nota nova atualizado.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<NotaEntity> atualizarTurma(@PathVariable Long id, @RequestBody NotaEntity notaAtualizada) {
+    public ResponseEntity<NotaResponse> atualizarTurma(@PathVariable Long id, @RequestBody NotaRequest request) {
         log.info("PUT /api/notas/{} -> Atualizando nota com o ID: {}", id, id);
-        NotaEntity nota = notaService.atualizarNota(id, notaAtualizada);
-        log.debug("PUT /api/notas/{} -> Nota atualizado: {}", id, nota);
-        return ResponseEntity.status(HttpStatus.OK).body(nota);
+        NotaResponse novaNota = notaService.atualizarNota(id, request);
+        log.debug("PUT /api/notas/{} -> Nota atualizado: {}", id, novaNota);
+        return ResponseEntity.status(HttpStatus.OK).body(novaNota);
     }
 
     /**

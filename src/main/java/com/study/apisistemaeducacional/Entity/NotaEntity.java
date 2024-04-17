@@ -19,7 +19,7 @@ public class NotaEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long valor;
+    private Double valor;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "data_nota")
