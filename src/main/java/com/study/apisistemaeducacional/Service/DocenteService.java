@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface DocenteService {
     CriarDocenteResponse criarDocente(CriarDocenteRequest request);
-    public CriarDocenteResponse obterDocentePorId(Long id);
+    CriarDocenteResponse obterDocentePorId(Long id);
     DocenteEntity atualizarDocente(Long id, DocenteEntity docente);
-    List<DocenteEntity> listarTodosDocentes();
+    List<CriarDocenteResponse> listarTodosDocentes();
     void deletarDocente(Long id);
 }
