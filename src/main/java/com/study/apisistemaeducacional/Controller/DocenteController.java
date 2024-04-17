@@ -24,7 +24,6 @@ import java.util.List;
 @RequestMapping("/api/docentes")
 public class DocenteController {
     private final DocenteService docenteService;
-    private final UsuarioRepository usuarioRepository;
 
     /**
      * Endpoint para criar um novo docente.
@@ -91,11 +90,13 @@ public class DocenteController {
      *
      * @return todos os docentes.
      */
-    @GetMapping
-    public ResponseEntity<List<DocenteEntity>> listarDocentes() {
-        log.info("GET /api/disciplinas -> Listando todas as disciplinas");
-        List<DocenteEntity> docentes = docenteService.listarTodosDocentes();
-        log.debug("GET /api/disciplinas -> Total de disciplinas encontradas: {}", docentes.size());
-        return ResponseEntity.status(HttpStatus.OK).body(docentes);
+    @GetMapping // Mapeie o método para a rota GET /api/docentes
+    public ResponseEntity<List<CriarDocenteResponse>> listarDocentes() {
+        log.info("GET /api/docentes -> Listando todos os Docentes!");
+        List<CriarDocenteResponse> usuariosDTO = docenteService.listarTodosDocentes();
+
+        // Retorne a lista de usuários DTO com status OK
+        log.debug("GET /api/disciplinas -> Total de disciplinas encontradas: {}", usuariosDTO.size());
+        return ResponseEntity.status(HttpStatus.OK).body(usuariosDTO);
     }
 }
