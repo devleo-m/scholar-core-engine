@@ -1,32 +1,62 @@
 package com.study.apisistemaeducacional.Service.Impl;
 
+import com.study.apisistemaeducacional.Controller.dto.request.TurmaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.TurmaResponse;
+import com.study.apisistemaeducacional.Entity.CursoEntity;
+import com.study.apisistemaeducacional.Entity.DocenteEntity;
 import com.study.apisistemaeducacional.Entity.TurmaEntity;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
+import com.study.apisistemaeducacional.Repository.CursoRepository;
+import com.study.apisistemaeducacional.Repository.DocenteRepository;
 import com.study.apisistemaeducacional.Repository.TurmaRepository;
 import com.study.apisistemaeducacional.Service.TurmaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class TurmaServiceImpl implements TurmaService {
     private final TurmaRepository turmaRepository;
+    private final DocenteRepository docenteRepository;
+    private final CursoRepository cursoRepository;
 
     /**
      * Método para criar Turma.
      *
-     * @param turma a ser adicionado.
+     * @param request a ser adicionado.
      * @return Turma criada.
      */
     @Override
-    public TurmaEntity criarTurma(TurmaEntity turma) {
-        log.info("Criando nova turma: {}", turma);
-        return turmaRepository.save(turma);
+    public TurmaResponse criarTurma(TurmaRequest request) {
+        log.info("Criando nova turma: {}", request);
+
+        DocenteEntity docente = docenteRepository.findById(request.docenteId())
+                .orElseThrow(() -> new NotFoundException("Docente nao encontrado"));
+
+        CursoEntity curso = cursoRepository.findById(request.cursoId())
+                .orElseThrow(() -> new NotFoundException("Curso nao encontrado"));
+
+        TurmaEntity turmaEntity = new TurmaEntity();
+        turmaEntity.setNome(request.nome());
+        turmaEntity.setDocente(docente);
+        turmaEntity.setCurso(curso);
+
+        TurmaEntity turma = turmaRepository.save(turmaEntity);
+
+        TurmaResponse response = new TurmaResponse(
+                turma.getId(),
+                turma.getNome(),
+                turma.getDocente().getNome(),
+                turma.getCurso().getNome()
+        );
+        return response;
     }
 
     /**
@@ -37,29 +67,56 @@ public class TurmaServiceImpl implements TurmaService {
      * @throws NotFoundException Se a Turma não for encontrado.
      */
     @Override
-    public TurmaEntity obterTurmaPorId(Long id) {
+    public TurmaResponse obterTurmaPorId(Long id) {
         log.info("Obtendo turma por ID: {}", id);
-        Optional<TurmaEntity> turmaOptional = turmaRepository.findById(id);
-        return turmaOptional.orElseThrow(() -> {
-            log.warn("turma não encontrada pelo ID: {}", id);
-            return new NotFoundException("turma não encontrada com o ID: " + id);
+        Optional<TurmaEntity> TurmaOptional = turmaRepository.findById(id);
+        TurmaEntity turma = TurmaOptional.orElseThrow(()-> {
+            log.warn("Turma não encontrada pelo ID: {}", id);
+            return new NotFoundException("Turma não encontrada com o ID: " + id);
         });
+        TurmaResponse turmaResponse = new TurmaResponse(
+                turma.getId(),
+                turma.getNome(),
+                turma.getDocente().getNome(),
+                turma.getCurso().getNome()
+        );
+        return turmaResponse;
     }
 
     /**
      * Método para atualizar Turmas pelo id.
      *
      * @param id id da Turma para ser atualizado
-     * @param turma dados novos da Turma
+     * @param request dados novos da Turma
      * @verificarExistenciaDocente metodo para verificar se a Turma existe
      * @return a Turma atualizada
      */
     @Override
-    public TurmaEntity atualizarTurma(Long id, TurmaEntity turma) {
+    public TurmaResponse atualizarTurma(Long id, TurmaRequest request) {
         log.info("Atualizando turma pelo ID: {}", id);
         verificarExistenciaTurma(id);
-        turma.setId(id);
-        return turmaRepository.save(turma);
+
+        DocenteEntity docente = docenteRepository.findById(request.docenteId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        CursoEntity curso = cursoRepository.findById(request.cursoId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        TurmaEntity turma = turmaRepository.findById(id)
+                .orElseThrow(()-> {
+                    log.warn("Turma não encontrado pelo ID: {}", id);
+                    throw new NotFoundException("Turma não encontrado com o ID: " + id);
+                });
+        turma.setNome(request.nome());
+        turma.setDocente(docente);
+        turma.setCurso(curso);
+
+        TurmaEntity turmaAtualizada = turmaRepository.save(turma);
+        return new TurmaResponse(
+                turmaAtualizada.getId(),
+                turmaAtualizada.getNome(),
+                turmaAtualizada.getDocente().getNome(),
+                turmaAtualizada.getCurso().getNome()
+        );
     }
 
     /**
@@ -68,9 +125,17 @@ public class TurmaServiceImpl implements TurmaService {
      * @return Lista de todas as Turma.
      */
     @Override
-    public List<TurmaEntity> listarTodasTurmas() {
+    public List<TurmaResponse> listarTodasTurmas() {
         log.info("Listando todas as Turmas!");
-        return turmaRepository.findAll();
+        List<TurmaEntity> turmas = turmaRepository.findAll();
+        List<TurmaResponse> turmasResponse = turmas.stream()
+                .map(turma -> new TurmaResponse(
+                        turma.getId(),
+                        turma.getNome(),
+                        turma.getDocente().getNome(),
+                        turma.getCurso().getNome()))
+                .collect(Collectors.toList());
+        return turmasResponse;
     }
 
     /**
