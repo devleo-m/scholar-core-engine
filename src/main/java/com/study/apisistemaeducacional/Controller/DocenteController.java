@@ -1,5 +1,7 @@
 package com.study.apisistemaeducacional.Controller;
 
+import com.study.apisistemaeducacional.Controller.dto.request.DocenteRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.DocenteResponse;
 import com.study.apisistemaeducacional.Entity.DocenteEntity;
 import com.study.apisistemaeducacional.Service.DocenteService;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +22,15 @@ public class DocenteController {
     /**
      * Endpoint para criar um novo docente.
      *
-     * @param docente O docente a ser adicionado.
+     * @param request O docente a ser adicionado.
      * @return O docente criado.
      */
     @PostMapping
-    public ResponseEntity<DocenteEntity> criarDocente(@RequestBody DocenteEntity docente) {
-        log.info("POST /api/docentes -> Adicionando novo Docente: {}", docente);
-        DocenteEntity novoDocente = docenteService.criarDocente(docente);
-        log.debug("POST /api/docentes -> Novo Docente adicionada: {}", novoDocente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoDocente);
+    public ResponseEntity<DocenteResponse> criarDocente(@RequestBody DocenteRequest request) {
+        log.info("POST /api/docentes -> Adicionando novo Docente: {}", request);
+        DocenteResponse response = docenteService.criarDocente(request);
+        log.debug("POST /api/docentes -> Novo Docente adicionado: {}", response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -38,26 +40,32 @@ public class DocenteController {
      * @return O docente encontrado.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<DocenteEntity> obterDocentePorId(@PathVariable Long id) {
+    public ResponseEntity<DocenteResponse> obterDocentePorId(@PathVariable Long id) {
         log.info("GET /api/docentes/{} -> Obtendo docentes por ID", id);
-        DocenteEntity disciplina = docenteService.obterDocentePorId(id);
-        log.debug("GET /api/docentes/{} -> docente encontrado: {}", id, disciplina);
-        return ResponseEntity.status(HttpStatus.OK).body(disciplina);
+        DocenteResponse docente = docenteService.obterDocentePorId(id);
+        log.debug("GET /api/docentes/{} -> docente encontrado: {}", id, docente);
+        return ResponseEntity.status(HttpStatus.OK).body(docente);
     }
 
     /**
      * Endpoint para atualizar um docente pelo ID.
      *
      * @param id O ID do docente a ser obtido.
-     * @param docenteAtualizado o docente que sera atualizado
+     * @param request o docente que sera atualizado
      * @return O docente novo atualizado.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<DocenteEntity> atualizarDocente(@PathVariable Long id, @RequestBody DocenteEntity docenteAtualizado) {
+    public ResponseEntity<DocenteResponse> atualizarDocente(@PathVariable Long id, @RequestBody DocenteRequest request) {
         log.info("PUT /api/docentes/{} -> Atualizando Docente com o ID: {}", id, id);
-        DocenteEntity docente = docenteService.atualizarDocente(id, docenteAtualizado);
+        DocenteEntity docente = docenteService.atualizarDocente(id, request);
+        DocenteResponse response = new DocenteResponse(
+                docente.getId(),
+                docente.getNome(),
+                docente.getDataEntrada(),
+                docente.getUsuario().getLogin(),
+                docente.getUsuario().getPapel().getNome());
         log.debug("PUT /api/docentes/{} -> Docente atualizado: {}", id, docente);
-        return ResponseEntity.status(HttpStatus.OK).body(docente);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /**
@@ -80,10 +88,10 @@ public class DocenteController {
      * @return todos os docentes.
      */
     @GetMapping
-    public ResponseEntity<List<DocenteEntity>> listarDocentes() {
-        log.info("GET /api/disciplinas -> Listando todas as disciplinas");
-        List<DocenteEntity> docentes = docenteService.listarTodosDocentes();
-        log.debug("GET /api/disciplinas -> Total de disciplinas encontradas: {}", docentes.size());
-        return ResponseEntity.status(HttpStatus.OK).body(docentes);
+    public ResponseEntity<List<DocenteResponse>> listarDocentes() {
+        log.info("GET /api/docentes -> Listando todos os Docentes!");
+        List<DocenteResponse> usuariosDTO = docenteService.listarTodosDocentes();
+        log.debug("GET /api/docentes -> Total de Docentes encontradas: {}", usuariosDTO.size());
+        return ResponseEntity.status(HttpStatus.OK).body(usuariosDTO);
     }
 }

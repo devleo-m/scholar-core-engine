@@ -1,7 +1,10 @@
 package com.study.apisistemaeducacional.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -25,4 +28,13 @@ public class DocenteEntity {
     @ManyToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private UsuarioEntity usuario;
+
+    public UsuarioEntity getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
+    }
+
 }
