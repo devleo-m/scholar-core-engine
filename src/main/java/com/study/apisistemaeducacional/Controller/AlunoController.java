@@ -1,6 +1,7 @@
 package com.study.apisistemaeducacional.Controller;
 
-import com.study.apisistemaeducacional.Entity.AlunoEntity;
+import com.study.apisistemaeducacional.Controller.dto.request.AlunoRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.AlunoResponse;
 import com.study.apisistemaeducacional.Service.AlunoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +21,13 @@ public class AlunoController {
     /**
      * Endpoint para criar um novo aluno.
      *
-     * @param aluno O aluno a ser adicionado.
+     * @param request O aluno a ser adicionado.
      * @return O aluno criado.
      */
     @PostMapping
-    public ResponseEntity<AlunoEntity> criarAluno(@RequestBody AlunoEntity aluno) {
-        log.info("POST /api/alunos -> Adicionando novo Aluno: {}", aluno);
-        AlunoEntity novoaluno = alunoService.criarAluno(aluno);
+    public ResponseEntity<AlunoResponse> criarAluno(@RequestBody AlunoRequest request) {
+        log.info("POST /api/alunos -> Adicionando novo Aluno: {}", request);
+        AlunoResponse novoaluno = alunoService.criarAluno(request);
         log.debug("POST /api/alunos -> Novo Aluno adicionado: {}", novoaluno);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoaluno);
     }
@@ -38,9 +39,9 @@ public class AlunoController {
      * @return O aluno encontrado.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AlunoEntity> obterAlunoPorId(@PathVariable Long id) {
+    public ResponseEntity<AlunoResponse> obterAlunoPorId(@PathVariable Long id) {
         log.info("GET /api/alunos/{} -> Obtendo Aluno por ID", id);
-        AlunoEntity aluno = alunoService.obterAlunoPorId(id);
+        AlunoResponse aluno = alunoService.obterAlunoPorId(id);
         log.debug("GET /api/alunos/{} -> Aluno encontrado: {}", id, aluno);
         return ResponseEntity.status(HttpStatus.OK).body(aluno);
     }
@@ -49,13 +50,13 @@ public class AlunoController {
      * Endpoint para atualizar um aluno pelo ID.
      *
      * @param id O ID do aluno a ser obtido.
-     * @param alunoAtualizado o aluno que sera atualizado
+     * @param request o aluno que sera atualizado
      * @return O aluno novo atualizado.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<AlunoEntity> atualizarAluno(@PathVariable Long id, @RequestBody AlunoEntity alunoAtualizado) {
+    public ResponseEntity<AlunoResponse> atualizarAluno(@PathVariable Long id, @RequestBody AlunoRequest request) {
         log.info("PUT /api/alunos/{} -> Atualizando Aluno com o ID: {}", id, id);
-        AlunoEntity aluno = alunoService.atualizarAluno(id, alunoAtualizado);
+        AlunoResponse aluno = alunoService.atualizarAluno(id, request);
         log.debug("PUT /api/alunos/{} -> Aluno atualizado: {}", id, aluno);
         return ResponseEntity.status(HttpStatus.OK).body(aluno);
     }
@@ -80,9 +81,9 @@ public class AlunoController {
      * @return todos os Alunos.
      */
     @GetMapping
-    public ResponseEntity<List<AlunoEntity>> listarAlunos() {
+    public ResponseEntity<List<AlunoResponse>> listarAlunos() {
         log.info("GET /api/alunos -> Listando todos os Alunos");
-        List<AlunoEntity> alunos = alunoService.listarTodosAlunos();
+        List<AlunoResponse> alunos = alunoService.listarTodosAlunos();
         log.debug("GET /api/alunos -> Total de Alunos encontrados: {}", alunos.size());
         return ResponseEntity.status(HttpStatus.OK).body(alunos);
     }
