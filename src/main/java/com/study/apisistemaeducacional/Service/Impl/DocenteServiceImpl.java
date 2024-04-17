@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -79,9 +80,16 @@ public class DocenteServiceImpl implements DocenteService {
      * @return Lista de todos os docentes.
      */
     @Override
-    public List<DocenteEntity> listarTodosDocentes() {
+    public List<CriarDocenteResponse> listarTodosDocentes() {
         log.info("Listando todos os Docentes!");
-        return docenteRepository.findAll();
+        List<DocenteEntity> docentes = docenteRepository.findAll();
+
+        // Mapeie as entidades Docente para os DTOs de resposta
+        List<CriarDocenteResponse> usuariosDTO = docentes.stream()
+                .map(docente -> new CriarDocenteResponse(docente.getId(), docente.getNome(), docente.getUsuario().getPapel().getNome()))
+                .collect(Collectors.toList());
+
+        return usuariosDTO;
     }
 
     /**
