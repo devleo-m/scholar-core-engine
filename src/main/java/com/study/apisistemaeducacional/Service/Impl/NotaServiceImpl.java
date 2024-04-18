@@ -3,6 +3,7 @@ package com.study.apisistemaeducacional.Service.Impl;
 import com.study.apisistemaeducacional.Controller.dto.request.NotaRequest;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaPorAlunoResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaResponse;
+import com.study.apisistemaeducacional.Controller.dto.response.NotaTotalResponse;
 import com.study.apisistemaeducacional.Entity.*;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
 import com.study.apisistemaeducacional.Repository.*;
@@ -25,6 +26,12 @@ public class NotaServiceImpl implements NotaService {
     private final DocenteRepository docenteRepository;
     private final MateriaRepository materiaRepository;
 
+    /**
+     * Lista todas as notas associadas a um aluno específico.
+     *
+     * @param id O identificador único do aluno.
+     * @return Uma lista de {@code NotaPorAlunoResponse} contendo as notas do aluno.
+     */
     @Override
     public List<NotaPorAlunoResponse> listarNotaPorAluno(Long id) {
         log.info("Listando todas as notas para o aluno com o ID: {}", id);
@@ -40,9 +47,22 @@ public class NotaServiceImpl implements NotaService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Cria uma nova nota para um aluno, docente e matéria específicos.
+     * A nota criada deve estar entre 0 e 10. Caso contrário, uma exceção será lançada.
+     *
+     * @param request O objeto {@code NotaRequest} contendo os detalhes da nota a ser criada.
+     * @return Um objeto {@code NotaResponse} contendo os detalhes da nota criada.
+     * @throws IllegalArgumentException Se o valor da nota não estiver entre 0 e 10.
+     * @throws RuntimeException Se o aluno, docente ou matéria não forem encontrados no repositório.
+     */
     @Override
     public NotaResponse criarNota(NotaRequest request) {
         log.info("Criando nova nota: {}", request);
+
+        if (request.valorNota() < 0 || request.valorNota() > 10) {
+            throw new IllegalArgumentException("A nota deve ser entre 0 e 10");
+        }
 
         AlunoEntity aluno = alunoRepository.findById(request.alunoId())
                 .orElseThrow(()-> new RuntimeException("Aluno nao encontrado"));
@@ -73,6 +93,14 @@ public class NotaServiceImpl implements NotaService {
         );
         return response;
     }
+
+    /**
+     * Obtém os detalhes de uma nota específica pelo seu ID.
+     *
+     * @param id O identificador único da nota a ser obtida.
+     * @return Um objeto {@code NotaResponse} contendo os detalhes da nota encontrada.
+     * @throws NotFoundException Se a nota com o ID fornecido não for encontrada no repositório.
+     */
     @Override
     public NotaResponse obterNotaPorId(Long id) {
         log.info("Obtendo nota por ID: {}", id);
@@ -92,6 +120,16 @@ public class NotaServiceImpl implements NotaService {
         return response;
     }
 
+    /**
+     * Atualiza a nota de um aluno para uma determinada matéria e docente.
+     *
+     * @param id O identificador único da nota a ser atualizada.
+     * @param request O objeto NotaRequest contendo os detalhes da atualização.
+     * @return NotaResponse contendo os detalhes da nota atualizada.
+     * @throws RuntimeException Se o aluno, docente ou matéria não forem encontrados.
+     * @throws NotFoundException Se a nota não for encontrada pelo ID fornecido.
+     * @throws IllegalArgumentException Se o valor da nota não estiver no intervalo de 0 a 10.
+     */
     @Override
     public NotaResponse atualizarNota(Long id, NotaRequest request) {
         log.info("Atualizando turma pelo ID: {}", id);
@@ -109,6 +147,10 @@ public class NotaServiceImpl implements NotaService {
                           log.warn("Nota não encontrado pelo ID: {}", id);
                           throw new NotFoundException("Nota não encontrado com o ID: " + id);
                 });
+
+        if(request.valorNota() < 0 || request.valorNota() > 10) {
+            throw new IllegalArgumentException("A nota deve ser entre 0 e 10.");
+        }
 
         notaEntity.setValor(request.valorNota());
         notaEntity.setData_nota(request.dataNota());
@@ -128,6 +170,11 @@ public class NotaServiceImpl implements NotaService {
         );
     }
 
+    /**
+     * Deleta a nota de um aluno com base no ID fornecido.
+     *
+     * @param id O identificador único da nota a ser deletada.
+     */
     @Override
     public void deletarNota(Long id) {
         log.info("Deletando Turma com o ID: {}", id);
@@ -135,6 +182,44 @@ public class NotaServiceImpl implements NotaService {
         notaRepository.deleteById(id);
     }
 
+    /**
+     * Calcula a nota total de um aluno com base em todas as notas registradas.
+     *
+     * @param idAluno O identificador único do aluno.
+     * @return NotaTotalResponse contendo o ID do aluno, nome e a nota total calculada.
+     * @throws RuntimeException Se não houver notas registradas para o aluno ou se o aluno não for encontrado.
+     */
+    @Override
+    public NotaTotalResponse calcularNotaTotal(Long idAluno) {
+        List<NotaEntity> notas = notaRepository.findAllByIdAluno(idAluno);
+        Double somaNotas = notas.stream()
+                .mapToDouble(NotaEntity::getValor)
+                .sum();
+        Long quantidadeNotas = (long) notas.size();
+
+        if (quantidadeNotas == 0) {
+            throw new RuntimeException("Não há notas registradas para o aluno.");
+        }
+
+        Double notaTotal = (somaNotas / quantidadeNotas) * 10;
+        AlunoEntity aluno = alunoRepository.findById(idAluno)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado."));
+
+        return new NotaTotalResponse(
+                aluno.getId(),
+                aluno.getNome(),
+                notaTotal
+        );
+    }
+
+    /**
+     * Verifica a existência de uma nota pelo seu ID.
+     * Se a nota não for encontrada, um aviso é registrado e uma exceção é lançada.
+     * Se a nota for encontrada, uma informação é registrada.
+     *
+     * @param id O ID da nota a ser verificada.
+     * @throws NotFoundException Se a nota com o ID especificado não for encontrada.
+     */
     private void verificarExistenciaNota(Long id) {
         if (!notaRepository.existsById(id)) {
             log.warn("Nota não encontrada com o ID: {}", id);

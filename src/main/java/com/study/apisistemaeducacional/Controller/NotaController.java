@@ -3,7 +3,8 @@ package com.study.apisistemaeducacional.Controller;
 import com.study.apisistemaeducacional.Controller.dto.request.NotaRequest;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaPorAlunoResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaResponse;
-import com.study.apisistemaeducacional.Entity.NotaEntity;
+import com.study.apisistemaeducacional.Controller.dto.response.NotaTotalResponse;
+import com.study.apisistemaeducacional.Service.Impl.AlunoServiceImpl;
 import com.study.apisistemaeducacional.Service.NotaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/notas")
 public class NotaController {
     private final NotaService notaService;
+    private final AlunoServiceImpl alunoServiceImpl;
 
     /**
      * Endpoint para listar todas as notas por aluno(id).
@@ -88,5 +90,13 @@ public class NotaController {
         notaService.deletarNota(id);
         log.debug("DELETE /api/notas/{} -> Nota deletada com sucesso", id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/alunos/{id}/pontuacao")
+    public ResponseEntity<NotaTotalResponse> calcularPontuacao(@PathVariable Long id) {
+        log.info("GET /api/alunos/{}/pontuacao -> Calculando pontuação para o aluno", id);
+        NotaTotalResponse pontuacao = notaService.calcularNotaTotal(id);
+        log.debug("GET /api/alunos/{}/pontuacao -> Pontuação calculada: {}", id, pontuacao);
+        return ResponseEntity.status(HttpStatus.OK).body(pontuacao);
     }
 }
