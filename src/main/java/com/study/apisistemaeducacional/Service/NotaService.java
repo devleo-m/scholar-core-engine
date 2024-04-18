@@ -4,8 +4,6 @@ import com.study.apisistemaeducacional.Controller.dto.request.NotaRequest;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaPorAlunoResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaTotalResponse;
-import com.study.apisistemaeducacional.Controller.dto.response.PontuacaoResponse;
-import com.study.apisistemaeducacional.Entity.NotaEntity;
 
 import java.util.List;
 
