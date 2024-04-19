@@ -9,6 +9,7 @@ public record AlunoResponse (
         String nome,
         @JsonFormat(pattern = "dd/MM/yyyy")
         Date nascimento,
+        String turma,
         String login,
         String papel
 ){}
