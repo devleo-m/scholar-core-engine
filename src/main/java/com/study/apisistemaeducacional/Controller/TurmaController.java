@@ -1,6 +1,7 @@
 package com.study.apisistemaeducacional.Controller;
 
 import com.study.apisistemaeducacional.Controller.dto.request.TurmaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.TurmaPorIdResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.TurmaResponse;
 import com.study.apisistemaeducacional.Service.TurmaService;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,9 @@ public class TurmaController {
      * @return A turma encontrada.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TurmaResponse> obterTurmaPorId(@PathVariable Long id) {
+    public ResponseEntity<TurmaPorIdResponse> obterTurmaPorId(@PathVariable Long id) {
         log.info("GET /api/turmas/{} -> Obtendo turma por ID", id);
-        TurmaResponse turma = turmaService.obterTurmaPorId(id);
+        TurmaPorIdResponse turma = turmaService.obterTurmaPorId(id);
         log.debug("GET /api/turmas/{} -> turma encontrada: {}", id, turma);
         return ResponseEntity.status(HttpStatus.OK).body(turma);
     }
