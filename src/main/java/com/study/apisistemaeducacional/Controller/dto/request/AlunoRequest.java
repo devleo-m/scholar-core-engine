@@ -8,5 +8,6 @@ public record AlunoRequest(
         String nome,
         @JsonFormat(pattern = "dd/MM/yyyy")
         Date nascimento,
+        Long turmaId,
         Long usuarioId
 ){}

@@ -11,25 +11,17 @@ CREATE TABLE IF NOT EXISTS usuario (
     FOREIGN KEY (papel_id) REFERENCES papel(id)
 );
 
+CREATE TABLE IF NOT EXISTS curso (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS docente (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     data_entrada DATE DEFAULT NOW(),
     id_usuario BIGINT NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id)
-);
-
-CREATE TABLE IF NOT EXISTS aluno (
-    id BIGSERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
-    data_nascimento DATE NOT NULL,
-    id_usuario BIGINT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
-);
-
-CREATE TABLE IF NOT EXISTS curso (
-    id BIGSERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS turma (
@@ -46,6 +38,16 @@ CREATE TABLE IF NOT EXISTS materia (
     nome VARCHAR(100) NOT NULL,
     id_curso BIGINT NOT NULL,
     FOREIGN KEY (id_curso) REFERENCES curso(id)
+);
+
+CREATE TABLE IF NOT EXISTS aluno (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    id_turma BIGINT NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    FOREIGN KEY (id_turma) REFERENCES turma(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
 );
 
 CREATE TABLE IF NOT EXISTS nota (

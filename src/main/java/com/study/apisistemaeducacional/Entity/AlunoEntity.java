@@ -28,4 +28,8 @@ public class AlunoEntity{
     @OneToOne
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private UsuarioEntity usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "id_turma", referencedColumnName = "id")
+    private TurmaEntity turma;
 }
