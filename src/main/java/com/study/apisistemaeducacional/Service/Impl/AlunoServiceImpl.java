@@ -3,9 +3,11 @@ package com.study.apisistemaeducacional.Service.Impl;
 import com.study.apisistemaeducacional.Controller.dto.request.AlunoRequest;
 import com.study.apisistemaeducacional.Controller.dto.response.AlunoResponse;
 import com.study.apisistemaeducacional.Entity.AlunoEntity;
+import com.study.apisistemaeducacional.Entity.TurmaEntity;
 import com.study.apisistemaeducacional.Entity.UsuarioEntity;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
 import com.study.apisistemaeducacional.Repository.AlunoRepository;
+import com.study.apisistemaeducacional.Repository.TurmaRepository;
 import com.study.apisistemaeducacional.Repository.UsuarioRepository;
 import com.study.apisistemaeducacional.Service.AlunoService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class AlunoServiceImpl implements AlunoService {
     private final AlunoRepository alunoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final TurmaRepository turmaRepository;
 
     /**
      * Método para criar aluno.
@@ -36,12 +39,15 @@ public class AlunoServiceImpl implements AlunoService {
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
 
+        TurmaEntity turma = turmaRepository.findById(request.turmaId())
+                .orElseThrow(() -> new RuntimeException("Turma nao encontrada"));
+
         AlunoEntity alunoEntity = new AlunoEntity();
         alunoEntity.setNome(request.nome());
 
         Date dataEntrada = request.nascimento() != null ? request.nascimento() : null;
         alunoEntity.setData(dataEntrada);
-
+        alunoEntity.setTurma(turma);
         alunoEntity.setUsuario(usuario);
 
         AlunoEntity aluno = alunoRepository.save(alunoEntity);
@@ -49,6 +55,7 @@ public class AlunoServiceImpl implements AlunoService {
                 aluno.getId(),
                 aluno.getNome(),
                 aluno.getData(),
+                aluno.getTurma().getNome(),
                 aluno.getUsuario().getLogin(),
                 aluno.getUsuario().getPapel().getNome()
         );
@@ -74,6 +81,7 @@ public class AlunoServiceImpl implements AlunoService {
                 aluno.getId(),
                 aluno.getNome(),
                 aluno.getData(),
+                aluno.getTurma().getNome(),
                 aluno.getUsuario().getLogin(),
                 aluno.getUsuario().getPapel().getNome()
         );
@@ -96,6 +104,9 @@ public class AlunoServiceImpl implements AlunoService {
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        TurmaEntity turma = turmaRepository.findById(request.turmaId())
+                .orElseThrow(() -> new RuntimeException("Turma nao encontrada"));
+
         AlunoEntity aluno = alunoRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Aluno não encontrado pelo ID: {}", id);
@@ -105,6 +116,7 @@ public class AlunoServiceImpl implements AlunoService {
         aluno.setNome(request.nome());
         aluno.setUsuario(usuario);
         aluno.setData(request.nascimento());
+        aluno.setTurma(turma);
 
         AlunoEntity alunoAtualizado = alunoRepository.save(aluno);
 
@@ -112,6 +124,7 @@ public class AlunoServiceImpl implements AlunoService {
                 alunoAtualizado.getId(),
                 alunoAtualizado.getNome(),
                 alunoAtualizado.getData(),
+                alunoAtualizado.getTurma().getNome(),
                 alunoAtualizado.getUsuario().getLogin(),
                 alunoAtualizado.getUsuario().getPapel().getNome());
     }
@@ -129,6 +142,7 @@ public class AlunoServiceImpl implements AlunoService {
                         aluno.getId(),
                         aluno.getNome(),
                         aluno.getData(),
+                        aluno.getTurma().getNome(),
                         aluno.getUsuario().getLogin(),
                         aluno.getUsuario().getPapel().getNome()))
                 .collect(Collectors.toList());
