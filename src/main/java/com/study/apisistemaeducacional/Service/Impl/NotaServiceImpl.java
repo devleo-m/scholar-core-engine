@@ -11,6 +11,7 @@ import com.study.apisistemaeducacional.Service.NotaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ public class NotaServiceImpl implements NotaService {
      * @param id O identificador único do aluno.
      * @return Uma lista de {@code NotaPorAlunoResponse} contendo as notas do aluno.
      */
+    @Transactional(rollbackFor = NotFoundException.class)
     @Override
     public List<NotaPorAlunoResponse> listarNotaPorAluno(Long id) {
         log.info("Listando todas as notas para o aluno com o ID: {}", id);
@@ -211,6 +213,8 @@ public class NotaServiceImpl implements NotaService {
                 notaTotal
         );
     }
+
+
 
     /**
      * Verifica a existência de uma nota pelo seu ID.
