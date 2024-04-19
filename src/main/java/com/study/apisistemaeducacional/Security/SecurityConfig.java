@@ -63,11 +63,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/turmas/**").hasAnyRole("ADMIN", "PEDAGOGICO")
 
                         // Permissões NOTA
+                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/**").hasAnyRole("ADMIN","PROFESSOR","ALUNO")
+                        //.requestMatchers(HttpMethod.GET, "/api/notas/aluno/{id}/pontuacao").hasAnyRole("ADMIN","PROFESSOR","ALUNO")
                         .requestMatchers(HttpMethod.GET, "/api/notas/**").hasAnyRole("ADMIN", "PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/notas/**").hasAnyRole("ADMIN", "PROFESSOR")
                         .requestMatchers(HttpMethod.PUT, "/api/notas/**").hasAnyRole("ADMIN", "PROFESSOR")
-                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/{id}").hasRole("ALUNO")
-                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/{id}/pontuacao").hasRole("ALUNO")
 
                         // Permissões especificas do ADMIN
                         .requestMatchers(HttpMethod.POST, "/registrar").hasRole("ADMIN")
