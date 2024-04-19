@@ -67,7 +67,7 @@ public class SecurityController {
      * @return ResponseEntity contendo os detalhes do novo usuário e um token de autenticação, se o registro for bem-sucedido,
      *         ou uma resposta de erro se o usuário já existir no banco de dados.
      */
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PostMapping("/registrar")
     public ResponseEntity registrar(@RequestBody InserirUsuarioRequest body) {
         // Verifica se já existe um usuário com o mesmo login no banco de dados
