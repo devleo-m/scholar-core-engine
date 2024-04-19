@@ -20,7 +20,6 @@ import java.util.List;
 @RequestMapping("/api/notas")
 public class NotaController {
     private final NotaService notaService;
-    private final AlunoServiceImpl alunoServiceImpl;
 
     /**
      * Endpoint para listar todas as notas por aluno(id).
@@ -92,7 +91,7 @@ public class NotaController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/alunos/{id}/pontuacao")
+    @GetMapping("/aluno/{id}/pontuacao")
     public ResponseEntity<NotaTotalResponse> calcularPontuacao(@PathVariable Long id) {
         log.info("GET /api/alunos/{}/pontuacao -> Calculando pontuação para o aluno", id);
         NotaTotalResponse pontuacao = notaService.calcularNotaTotal(id);
