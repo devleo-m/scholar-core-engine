@@ -1,17 +1,23 @@
 package com.study.apisistemaeducacional.Controller;
 
 import com.study.apisistemaeducacional.Controller.dto.request.NotaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.ApiResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaPorAlunoResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.NotaTotalResponse;
-import com.study.apisistemaeducacional.Service.Impl.AlunoServiceImpl;
+import com.study.apisistemaeducacional.Entity.AlunoEntity;
+import com.study.apisistemaeducacional.Exception.NotFoundException;
+import com.study.apisistemaeducacional.Repository.AlunoRepository;
 import com.study.apisistemaeducacional.Service.NotaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -26,8 +32,9 @@ public class NotaController {
      *
      * @return todas as notas criadas por aluno.
      */
+    @PreAuthorize("hasAnyRole('ADMIN','ALUNO','PROFESSOR')")
     @GetMapping("/aluno/{id}")
-    public ResponseEntity<List<NotaPorAlunoResponse>> listarNotasPorAluno(@PathVariable Long id) {
+    public ResponseEntity<List<NotaPorAlunoResponse>> listarNotasPorAlunos(@PathVariable Long id) {
         log.info("GET /api/notas -> Listando todas as notas por aluno");
         List<NotaPorAlunoResponse> notas = notaService.listarNotaPorAluno(id);
         log.debug("GET /api/notas -> Total de notas encontradas por aluno: {}", notas.size());
@@ -91,6 +98,13 @@ public class NotaController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Endpoint para calcular pontuacao do aluno.
+     *
+     * @param id O ID do aluno.
+     * @return a nota do aluno calculada.
+     */
+    @PreAuthorize("hasRole('ALUNO')")
     @GetMapping("/aluno/{id}/pontuacao")
     public ResponseEntity<NotaTotalResponse> calcularPontuacao(@PathVariable Long id) {
         log.info("GET /api/alunos/{}/pontuacao -> Calculando pontuação para o aluno", id);
