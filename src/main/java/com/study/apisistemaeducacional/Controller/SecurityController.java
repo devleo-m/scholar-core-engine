@@ -11,6 +11,7 @@ import com.study.apisistemaeducacional.Repository.UsuarioRepository;
 import com.study.apisistemaeducacional.Security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,7 @@ public class SecurityController {
      * @param body O corpo da requisição contendo as informações de login.
      * @throws RuntimeException Se o usuário não for encontrado no banco de dados.
      * @return ResponseEntity contendo os dados de login se o login for bem-sucedido,
-     *         ou uma resposta de erro se o login falhar.
+     *                        ou uma resposta de erro se o login falhar.
      */
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequest body) {
@@ -44,7 +45,10 @@ public class SecurityController {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         // Verifica se a senha fornecida no corpo da requisição corresponde à senha armazenada para o usuário
-        if (passwordEncoder.matches(body.senha(), usuario.getSenha())) {
+        // Aceita tanto senhas criptografadas quanto não criptografadas
+        boolean senhaValida = passwordEncoder.matches(body.senha(), usuario.getSenha()) || body.senha().equals(usuario.getSenha());
+
+        if (senhaValida) {
             // Gera um token de autenticação para o usuário
             String token = tokenService.generateToken(usuario);
             // Retorna uma resposta com os dados de login e o token gerado
@@ -63,6 +67,7 @@ public class SecurityController {
      * @return ResponseEntity contendo os detalhes do novo usuário e um token de autenticação, se o registro for bem-sucedido,
      *         ou uma resposta de erro se o usuário já existir no banco de dados.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrar")
     public ResponseEntity registrar(@RequestBody InserirUsuarioRequest body) {
         // Verifica se já existe um usuário com o mesmo login no banco de dados
@@ -70,6 +75,12 @@ public class SecurityController {
 
         // Se não houver um usuário com o mesmo login, registra o novo usuário
         if(usuarioOptional.isEmpty()) {
+
+            // Verifica se a senha fornecida não é nula ou vazia
+            if (body.senha() == null || body.senha().isEmpty()) {
+                return ResponseEntity.badRequest().body("Senha não pode ser nula ou vazia");
+            }
+
             // Cria uma nova entidade de usuário
             UsuarioEntity novoUsuario = new UsuarioEntity();
             // Define a senha do novo usuário, aplicando o algoritmo de hash
@@ -105,17 +116,16 @@ public class SecurityController {
     private PapelEntity determinarPapel(String tipoUsuario) {
         // Se o tipo de usuário não for especificado ou não corresponder a nenhum papel existente, atribuímos o papel padrão "aluno"
         if (tipoUsuario == null || tipoUsuario.isEmpty()) {
-            return papelRepository.findByNome("aluno")
-                    .orElseThrow(() -> new RuntimeException("Papel 'aluno' não encontrado"));
+            return papelRepository.findByNome("ALUNO")
+                    .orElseThrow(() -> new RuntimeException("Papel 'ALUNO' não encontrado"));
         }
-
         // Buscamos o papel pelo nome especificado
-        Optional<PapelEntity> papelOptional = papelRepository.findByNome(tipoUsuario.toLowerCase());
+        Optional<PapelEntity> papelOptional = papelRepository.findByNome(tipoUsuario);
         if (papelOptional.isPresent()) {
             return papelOptional.get();
         } else {
             // Se o papel especificado não existir, lançamos uma exceção
-            throw new RuntimeException("Papel '" + tipoUsuario + "' não encontrado");
+            throw new RuntimeException("papel '" + tipoUsuario + "' não encontrado");
         }
     }
 }
