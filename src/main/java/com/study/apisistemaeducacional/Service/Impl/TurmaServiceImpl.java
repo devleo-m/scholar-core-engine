@@ -1,7 +1,9 @@
 package com.study.apisistemaeducacional.Service.Impl;
 
 import com.study.apisistemaeducacional.Controller.dto.request.TurmaRequest;
+import com.study.apisistemaeducacional.Controller.dto.response.TurmaPorIdResponse;
 import com.study.apisistemaeducacional.Controller.dto.response.TurmaResponse;
+import com.study.apisistemaeducacional.Entity.AlunoEntity;
 import com.study.apisistemaeducacional.Entity.CursoEntity;
 import com.study.apisistemaeducacional.Entity.DocenteEntity;
 import com.study.apisistemaeducacional.Entity.TurmaEntity;
@@ -13,7 +15,6 @@ import com.study.apisistemaeducacional.Service.TurmaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,18 +68,22 @@ public class TurmaServiceImpl implements TurmaService {
      * @throws NotFoundException Se a Turma não for encontrado.
      */
     @Override
-    public TurmaResponse obterTurmaPorId(Long id) {
+    public TurmaPorIdResponse obterTurmaPorId(Long id) {
         log.info("Obtendo turma por ID: {}", id);
         Optional<TurmaEntity> TurmaOptional = turmaRepository.findById(id);
         TurmaEntity turma = TurmaOptional.orElseThrow(()-> {
             log.warn("Turma não encontrada pelo ID: {}", id);
             return new NotFoundException("Turma não encontrada com o ID: " + id);
         });
-        TurmaResponse turmaResponse = new TurmaResponse(
+
+        List<AlunoEntity> alunos = turma.getAlunos();
+
+        TurmaPorIdResponse turmaResponse = new TurmaPorIdResponse(
                 turma.getId(),
                 turma.getNome(),
                 turma.getDocente().getNome(),
-                turma.getCurso().getNome()
+                turma.getCurso().getNome(),
+                (long) alunos.size()
         );
         return turmaResponse;
     }
