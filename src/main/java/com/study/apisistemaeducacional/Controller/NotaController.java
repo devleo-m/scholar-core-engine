@@ -32,7 +32,6 @@ public class NotaController {
      *
      * @return todas as notas criadas por aluno.
      */
-    @PreAuthorize("hasAnyRole('ADMIN','ALUNO','PROFESSOR')")
     @GetMapping("/aluno/{id}")
     public ResponseEntity<List<NotaPorAlunoResponse>> listarNotasPorAlunos(@PathVariable Long id) {
         log.info("GET /api/notas -> Listando todas as notas por aluno");
@@ -104,12 +103,41 @@ public class NotaController {
      * @param id O ID do aluno.
      * @return a nota do aluno calculada.
      */
-    @PreAuthorize("hasRole('ALUNO')")
     @GetMapping("/aluno/{id}/pontuacao")
     public ResponseEntity<NotaTotalResponse> calcularPontuacao(@PathVariable Long id) {
         log.info("GET /api/alunos/{}/pontuacao -> Calculando pontuação para o aluno", id);
         NotaTotalResponse pontuacao = notaService.calcularNotaTotal(id);
         log.debug("GET /api/alunos/{}/pontuacao -> Pontuação calculada: {}", id, pontuacao);
         return ResponseEntity.status(HttpStatus.OK).body(pontuacao);
+    }
+
+    //Metodos exclusivo dos alunos:
+
+    /**
+     * Endpoint para calcular pontuacao total do aluno.
+     *
+     * @param id O ID do aluno.
+     * @return a nota do aluno calculada.
+     */
+    @GetMapping("/aluno/pontuacao/total/{id}")
+    public ResponseEntity<NotaTotalResponse> calcularNotaTotalAluno(@PathVariable Long id) {
+        log.info("GET /api/alunos/{}/pontuacao -> Calculando pontuação para o aluno", id);
+        NotaTotalResponse pontuacao = notaService.calcularNotaTotalAluno(id);
+        log.debug("GET /api/alunos/{}/pontuacao -> Pontuação calculada: {}", id, pontuacao);
+        return ResponseEntity.status(HttpStatus.OK).body(pontuacao);
+    }
+
+    //listarNotaDoAluno
+    /**
+     * Endpoint para listar todas as notas por aluno(id).
+     *
+     * @return todas as notas criadas por aluno.
+     */
+    @GetMapping("/aluno/lista/notas/{id}")
+    public ResponseEntity<List<NotaPorAlunoResponse>> listarNotaDoAluno(@PathVariable Long id) {
+        log.info("GET /api/notas -> Listando todas as notas por aluno");
+        List<NotaPorAlunoResponse> notas = notaService.listarNotaDoAluno(id);
+        log.debug("GET /api/notas -> Total de notas encontradas por aluno: {}", notas.size());
+        return ResponseEntity.status(HttpStatus.OK).body(notas);
     }
 }
