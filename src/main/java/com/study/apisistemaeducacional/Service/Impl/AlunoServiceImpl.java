@@ -39,6 +39,12 @@ public class AlunoServiceImpl implements AlunoService {
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
 
+        // Verifica se o usuário já está associado a um aluno
+        Optional<AlunoEntity> alunoExistente = alunoRepository.findByUsuario(usuario);
+        if (alunoExistente.isPresent()) {
+            throw new RuntimeException("O usuário já está associado a um aluno.");
+        }
+
         // Verifica se o papel do usuário é "Aluno"
         if (!usuario.getPapel().getNome().equals("ALUNO")) {
             throw new RuntimeException("Somente usuários com o papel de 'Aluno' podem ser criados como alunos");
@@ -92,7 +98,6 @@ public class AlunoServiceImpl implements AlunoService {
         return response;
     }
 
-
     /**
      * Método para atualizar aluno pelo id.
      * @param id id do aluno para ser atualizado
@@ -107,6 +112,12 @@ public class AlunoServiceImpl implements AlunoService {
 
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // Verifica se o login já existe
+        Optional<UsuarioEntity> usuarioExistente = usuarioRepository.findByLogin(usuario.getLogin());
+        if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(usuario.getId())) {
+            throw new RuntimeException("Login já existe");
+        }
 
         if (!usuario.getPapel().getNome().equals("ALUNO")) {
             throw new RuntimeException("Somente usuários com o papel de 'Aluno' podem ser atualizados");

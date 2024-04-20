@@ -14,6 +14,6 @@ public interface NotaService {
     NotaResponse atualizarNota(Long id, NotaRequest request);
     void deletarNota(Long id);
     NotaTotalResponse calcularNotaTotal(Long idAluno);
-    NotaTotalResponse calcularNotaTotalAluno(Long idAluno);
-    public List<NotaPorAlunoResponse> listarNotaDoAluno(Long id);
+    NotaTotalResponse calcularNotaTotalAluno(String token);
+    List<NotaPorAlunoResponse> listarNotaDoAluno(String token);
 }
