@@ -12,6 +12,8 @@ O Sistema Educacional é uma API Rest back-end robusta desenvolvida em Java, uti
 - **GitFlow**: Estratégia de versionamento de código no GitHub.
 - **Trello**: Ferramenta para organização e gerenciamento de tarefas.
 
+#### Link do trello utilizado para esse projeto: https://trello.com/b/fYdt8YyN/leonardo-madeira-barbosa-da-silva-api-sistema-educacional
+
 ## Entidades e Atributos
 O sistema conta com diversas entidades, como `Papel`, `Usuário`, `Docente`, `Turma`, `Aluno`, `Curso`, `Matéria` e `Notas`, cada uma com seus atributos específicos e regras de negócio associadas.
 
