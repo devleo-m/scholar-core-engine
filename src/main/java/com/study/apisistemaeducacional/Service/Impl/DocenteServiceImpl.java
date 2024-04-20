@@ -38,6 +38,12 @@ public class DocenteServiceImpl implements DocenteService {
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        // Verifica se o usuário já está associado a um aluno
+        Optional<DocenteEntity> docenteExistente = docenteRepository.findByUsuario(usuario);
+        if (docenteExistente.isPresent()) {
+            throw new RuntimeException("O usuário já está associado a um `docente`!");
+        }
+
         // Verifica se o papel do usuário é permitido para um docente
         String papelUsuario = usuario.getPapel().getNome();
         if (!(papelUsuario.equals("PROFESSOR") || papelUsuario.equals("ADMIN") ||
@@ -137,6 +143,12 @@ public class DocenteServiceImpl implements DocenteService {
             throw new RuntimeException("Somente usuários com os papéis de 'ADMIN', 'PROFESSOR', 'RECRUITER' ou 'PEDAGOGICO' podem ser atualizados como docentes");
         }
 
+        // Verifica se o login já existe
+        Optional<UsuarioEntity> usuarioExistente = usuarioRepository.findByLogin(usuario.getLogin());
+        if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(usuario.getId())) {
+            throw new RuntimeException("Login já existe");
+        }
+
         // Busca o DocenteEntity pelo id
         DocenteEntity docente = docenteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Docente não encontrado com o ID: " + id));
@@ -169,7 +181,7 @@ public class DocenteServiceImpl implements DocenteService {
      */
     @Override
     public void deletarDocente(Long id) {
-        log.info("Deletando aluno com o ID: {}", id);
+        log.info("Deletando docente com o ID: {}", id);
         verificarExistenciaDocente(id);
 
         docenteRepository.deleteById(id);
