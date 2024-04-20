@@ -159,8 +159,10 @@ public class NotaServiceImpl implements NotaService {
             throw new IllegalArgumentException("A nota deve ser entre 0 e 10.");
         }
 
+        Date dataEntrada = request.dataNota() != null ? request.dataNota() : new Date();
+        notaEntity.setData_nota(dataEntrada);
+
         notaEntity.setValor(request.valorNota());
-        notaEntity.setData_nota(request.dataNota());
         notaEntity.setId_aluno(aluno);
         notaEntity.setId_docente(docente);
         notaEntity.setId_materia(materia);
