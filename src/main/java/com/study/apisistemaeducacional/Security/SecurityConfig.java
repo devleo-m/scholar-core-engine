@@ -63,13 +63,19 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/turmas/**").hasAnyRole("ADMIN", "PEDAGOGICO")
 
                         // Permissões NOTA
-                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/**").hasAnyRole("ADMIN","PROFESSOR","ALUNO")
+                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/pontuacao/total/{id}").hasRole("ALUNO")
+                        .requestMatchers(HttpMethod.GET, "/api/notas/lista/notas/{id}").hasRole("ALUNO")
+
+                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/{id}").hasAnyRole("ADMIN","PROFESSOR")
+                        .requestMatchers(HttpMethod.GET, "/api/notas/aluno/{id}/pontuacao").hasAnyRole("ADMIN","PROFESSOR")
+                        .requestMatchers(HttpMethod.GET, "/api/notas/{id}").hasAnyRole("ADMIN","PROFESSOR")
+
                         //.requestMatchers(HttpMethod.GET, "/api/notas/aluno/{id}/pontuacao").hasAnyRole("ADMIN","PROFESSOR","ALUNO")
                         .requestMatchers(HttpMethod.GET, "/api/notas/**").hasAnyRole("ADMIN", "PROFESSOR")
                         .requestMatchers(HttpMethod.POST, "/api/notas/**").hasAnyRole("ADMIN", "PROFESSOR")
                         .requestMatchers(HttpMethod.PUT, "/api/notas/**").hasAnyRole("ADMIN", "PROFESSOR")
 
-                        // Permissões especificas do ADMIN
+                        // Permissões especificas
                         .requestMatchers(HttpMethod.POST, "/registrar").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
 

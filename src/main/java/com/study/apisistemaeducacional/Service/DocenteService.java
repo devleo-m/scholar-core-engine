@@ -9,7 +9,7 @@ import java.util.List;
 public interface DocenteService {
     DocenteResponse criarDocente(DocenteRequest request);
     DocenteResponse obterDocentePorId(Long id);
-    DocenteEntity atualizarDocente(Long id, DocenteRequest request);
+    DocenteResponse atualizarDocente(Long id, DocenteRequest request);
     List<DocenteResponse> listarTodosDocentes();
     void deletarDocente(Long id);
 }

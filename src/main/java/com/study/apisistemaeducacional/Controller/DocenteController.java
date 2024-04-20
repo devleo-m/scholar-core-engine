@@ -57,15 +57,9 @@ public class DocenteController {
     @PutMapping("/{id}")
     public ResponseEntity<DocenteResponse> atualizarDocente(@PathVariable Long id, @RequestBody DocenteRequest request) {
         log.info("PUT /api/docentes/{} -> Atualizando Docente com o ID: {}", id, id);
-        DocenteEntity docente = docenteService.atualizarDocente(id, request);
-        DocenteResponse response = new DocenteResponse(
-                docente.getId(),
-                docente.getNome(),
-                docente.getDataEntrada(),
-                docente.getUsuario().getLogin(),
-                docente.getUsuario().getPapel().getNome());
+        DocenteResponse docente = docenteService.atualizarDocente(id, request);
         log.debug("PUT /api/docentes/{} -> Docente atualizado: {}", id, docente);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(docente);
     }
 
     /**

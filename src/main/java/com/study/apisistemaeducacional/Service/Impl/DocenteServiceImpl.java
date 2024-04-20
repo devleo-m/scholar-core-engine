@@ -38,6 +38,13 @@ public class DocenteServiceImpl implements DocenteService {
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        // Verifica se o papel do usuário é permitido para um docente
+        String papelUsuario = usuario.getPapel().getNome();
+        if (!(papelUsuario.equals("PROFESSOR") || papelUsuario.equals("ADMIN") ||
+                papelUsuario.equals("RECRUITER") || papelUsuario.equals("PEDAGOGICO"))) {
+            throw new RuntimeException("Somente usuários com os papéis de 'ADMIN','PROFESSOR' 'RECRUITER' ou 'PEDAGOGICO' podem ser criados como docentes");
+        }
+
         // Converte o DTO de entrada para a entidade Docente
         DocenteEntity docenteEntity = new DocenteEntity();
         docenteEntity.setNome(request.nome());
@@ -117,26 +124,41 @@ public class DocenteServiceImpl implements DocenteService {
      * @return o docente atualizado.
      */
     @Override
-    public DocenteEntity atualizarDocente(Long id, DocenteRequest request) {
+    public DocenteResponse atualizarDocente(Long id, DocenteRequest request) {
         log.info("Atualizando docente pelo ID: {}", id);
         verificarExistenciaDocente(id);
 
-        // Busca o UsuarioEntity pelo id
+        // Busca o UsuarioEntity pelo id e verifica o papel do usuário
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        String papelUsuario = usuario.getPapel().getNome();
+        if (!(papelUsuario.equals("PROFESSOR") || papelUsuario.equals("ADMIN") ||
+                papelUsuario.equals("RECRUITER") || papelUsuario.equals("PEDAGOGICO"))) {
+            throw new RuntimeException("Somente usuários com os papéis de 'ADMIN', 'PROFESSOR', 'RECRUITER' ou 'PEDAGOGICO' podem ser atualizados como docentes");
+        }
 
         // Busca o DocenteEntity pelo id
-        Optional<DocenteEntity> docenteOptional = docenteRepository.findById(id);
-        DocenteEntity docente = docenteOptional.orElseThrow(() -> {
-            log.warn("Docente não encontrado pelo ID: {}", id);
-            throw new NotFoundException("Docente não encontrado com o ID: " + id);
-        });
+        DocenteEntity docente = docenteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Docente não encontrado com o ID: " + id));
 
+        // Atualiza o docente com os novos valores
         docente.setNome(request.nome());
         docente.setUsuario(usuario);
-        docente.setDataEntrada(request.dataEntrada()); // Atualiza a data de entrada
+        docente.setDataEntrada(request.dataEntrada());
 
-        return docenteRepository.save(docente);
+        // Salva o docente atualizado no repositório
+        DocenteEntity docenteAtualizado = docenteRepository.save(docente);
+
+        // Cria a resposta com os dados do docente atualizado
+        DocenteResponse response = new DocenteResponse(
+                docenteAtualizado.getId(),
+                docenteAtualizado.getNome(),
+                docenteAtualizado.getDataEntrada(),
+                docenteAtualizado.getUsuario().getLogin(),
+                docenteAtualizado.getUsuario().getPapel().getNome());
+
+        log.debug("Docente atualizado: {}", docenteAtualizado);
+        return response;
     }
 
     /**

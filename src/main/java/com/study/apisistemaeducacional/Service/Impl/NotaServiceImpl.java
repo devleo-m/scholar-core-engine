@@ -11,6 +11,7 @@ import com.study.apisistemaeducacional.Service.NotaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -32,10 +33,16 @@ public class NotaServiceImpl implements NotaService {
      * @param id O identificador único do aluno.
      * @return Uma lista de {@code NotaPorAlunoResponse} contendo as notas do aluno.
      */
+    @Transactional(rollbackFor = NotFoundException.class)
     @Override
     public List<NotaPorAlunoResponse> listarNotaPorAluno(Long id) {
         log.info("Listando todas as notas para o aluno com o ID: {}", id);
         List<NotaEntity> notas = notaRepository.findAllByIdAluno(id);
+
+        if (notas.isEmpty()) {
+            log.warn("Nenhuma nota encontrada para o aluno com o ID: {}", id);
+            throw new NotFoundException("Nenhuma nota encontrada para o aluno com o ID: " + id);
+        }
 
         return notas.stream()
                 .map(nota -> new NotaPorAlunoResponse(
@@ -195,15 +202,17 @@ public class NotaServiceImpl implements NotaService {
         Double somaNotas = notas.stream()
                 .mapToDouble(NotaEntity::getValor)
                 .sum();
-        Long quantidadeNotas = (long) notas.size();
 
-        if (quantidadeNotas == 0) {
-            throw new RuntimeException("Não há notas registradas para o aluno.");
-        }
-
-        Double notaTotal = (somaNotas / quantidadeNotas) * 10;
         AlunoEntity aluno = alunoRepository.findById(idAluno)
                 .orElseThrow(() -> new RuntimeException("Aluno não encontrado."));
+
+        Long quantidadeMaterias = notaRepository.countMateriasByAlunoId(idAluno);
+
+        if (quantidadeMaterias == 0) {
+            throw new RuntimeException("O aluno não está matriculado em nenhuma matéria.");
+        }
+
+        Double notaTotal = (somaNotas / quantidadeMaterias) * 10;
 
         return new NotaTotalResponse(
                 aluno.getId(),
@@ -227,5 +236,52 @@ public class NotaServiceImpl implements NotaService {
         } else {
             log.info("Nota encontrada com o ID: {}", id);
         }
+    }
+
+    /*
+    * Metodo exclusivo para ALUNO verificar a nota total!
+    */
+    public NotaTotalResponse calcularNotaTotalAluno(Long idAluno) {
+        List<NotaEntity> notas = notaRepository.findAllByIdAluno(idAluno);
+        Double somaNotas = notas.stream()
+                .mapToDouble(NotaEntity::getValor)
+                .sum();
+
+        AlunoEntity aluno = alunoRepository.findById(idAluno)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado."));
+
+        Long quantidadeMaterias = notaRepository.countMateriasByAlunoId(idAluno);
+
+        if (quantidadeMaterias == 0) {
+            throw new RuntimeException("O aluno não está matriculado em nenhuma matéria.");
+        }
+
+        Double notaTotal = (somaNotas / quantidadeMaterias) * 10;
+
+        return new NotaTotalResponse(
+                aluno.getId(),
+                aluno.getNome(),
+                notaTotal
+        );
+    }
+
+    @Override
+    public List<NotaPorAlunoResponse> listarNotaDoAluno(Long id) {
+        log.info("Listando todas as notas para o aluno com o ID: {}", id);
+        List<NotaEntity> notas = notaRepository.findAllByIdAluno(id);
+
+        if (notas.isEmpty()) {
+            log.warn("Nenhuma nota encontrada! Aguarde seu professor lancar ela");
+            throw new NotFoundException("Nenhuma nota encontrada! Aguarde seu professor lancar ela");
+        }
+
+        return notas.stream()
+                .map(nota -> new NotaPorAlunoResponse(
+                        nota.getValor(),
+                        nota.getId_aluno().getNome(),
+                        nota.getId_docente().getNome(),
+                        nota.getId_materia().getNome()
+                ))
+                .collect(Collectors.toList());
     }
 }

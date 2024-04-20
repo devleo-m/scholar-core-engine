@@ -39,6 +39,11 @@ public class AlunoServiceImpl implements AlunoService {
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuario nao encontrado"));
 
+        // Verifica se o papel do usuário é "Aluno"
+        if (!usuario.getPapel().getNome().equals("ALUNO")) {
+            throw new RuntimeException("Somente usuários com o papel de 'Aluno' podem ser criados como alunos");
+        }
+
         TurmaEntity turma = turmaRepository.findById(request.turmaId())
                 .orElseThrow(() -> new RuntimeException("Turma nao encontrada"));
 
@@ -61,7 +66,6 @@ public class AlunoServiceImpl implements AlunoService {
         );
         return response;
     }
-
 
     /**
      * Método para obter Docente pelo ID.
@@ -103,6 +107,10 @@ public class AlunoServiceImpl implements AlunoService {
 
         UsuarioEntity usuario = usuarioRepository.findById(request.usuarioId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (!usuario.getPapel().getNome().equals("ALUNO")) {
+            throw new RuntimeException("Somente usuários com o papel de 'Aluno' podem ser atualizados");
+        }
 
         TurmaEntity turma = turmaRepository.findById(request.turmaId())
                 .orElseThrow(() -> new RuntimeException("Turma nao encontrada"));
