@@ -17,7 +17,7 @@ O Sistema Educacional é uma API Rest back-end robusta desenvolvida em Java, uti
 ## Entidades e Atributos
 O sistema conta com diversas entidades, como `Papel`, `Usuário`, `Docente`, `Turma`, `Aluno`, `Curso`, `Matéria` e `Notas`, cada uma com seus atributos específicos e regras de negócio associadas.
 
-![sistema-educacional](https://github.com/devleo-m/api-sistema-educacional/assets/149954966/7e0b0454-14ba-44d9-ad38-744f0cf6d19a)
+![sistema-educacional](https://github.com/devleo-m/api-sistema-educacional/assets/149954966/056194a9-243e-4fe5-8d12-018a9c938829)
 
 ## Como Executar
 Para executar o Sistema Educacional, siga os passos abaixo:
@@ -175,7 +175,7 @@ Resposta:
 Resposta:
 ```json
 {
-    "id": 2,
+    "id": 1,
     "nome": "Joao Nascimento",
     "dataEntrada": "13/01/2017",
     "login": "joao",
@@ -402,7 +402,7 @@ Resposta:
     {
         "id": 1,
         "nome": "Leonardo Madeira",
-        "nascimento": "07/10/1996",
+        "nascimento": "01/01/1996",
         "turma": "FullStack [EDUCATION] MEGA",
         "login": "leonardo",
         "papel": "ALUNO"
@@ -422,7 +422,7 @@ Resposta:
 {
     "id": 1,
     "nome": "Leonardo Madeira",
-    "nascimento": "07/10/1996",
+    "nascimento": "01/01/1996",
     "turma": "FullStack [EDUCATION] MEGA",
     "login": "leonardo",
     "papel": "ALUNO"
@@ -730,8 +730,8 @@ Resposta:
 
 `OBS`: o ALUNO não tem acesso a esse metodo, apenas ADMIN e PROFESSOR
 O calculo é feito com a seguinte formula:
-`NOTA + NOTA + NOTA + NOTA / QUANTIDADE DE MATERIAS * 10`
-`10 + 7 + 6 + 10 / 1 * 10` = `330`
+#### (SOMA TODAS AS NOTAS) `NOTA + NOTA + NOTA + NOTA / QUANTIDADE DE MATERIAS * 10`
+#### `10 + 7 + 6 + 10 / 1 * 10` = `330`
 
 Resposta:
 ```json
