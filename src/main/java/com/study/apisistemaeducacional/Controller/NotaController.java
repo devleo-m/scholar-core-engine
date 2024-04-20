@@ -9,6 +9,7 @@ import com.study.apisistemaeducacional.Entity.AlunoEntity;
 import com.study.apisistemaeducacional.Exception.NotFoundException;
 import com.study.apisistemaeducacional.Repository.AlunoRepository;
 import com.study.apisistemaeducacional.Service.NotaService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -116,16 +117,23 @@ public class NotaController {
     /**
      * Endpoint para calcular pontuacao total do aluno.
      *
-     * @param id O ID do aluno.
      * @return a nota do aluno calculada.
      */
-    @GetMapping("/aluno/pontuacao/total/{id}")
-    public ResponseEntity<NotaTotalResponse> calcularNotaTotalAluno(@PathVariable Long id) {
-        log.info("GET /api/alunos/{}/pontuacao -> Calculando pontuação para o aluno", id);
-        NotaTotalResponse pontuacao = notaService.calcularNotaTotalAluno(id);
-        log.debug("GET /api/alunos/{}/pontuacao -> Pontuação calculada: {}", id, pontuacao);
+    @GetMapping("/aluno/pontuacao/total")
+    public ResponseEntity<NotaTotalResponse> calcularNotaTotalAluno(HttpServletRequest request) {
+
+        String token = request.getHeader("Authorization"); // Recupere o token do cabeçalho de autorização
+
+        if (token != null && token.startsWith("Bearer ")) { // Remova o prefixo "Bearer " do token
+            token = token.substring(7);
+        }
+
+        log.info("GET /api/aluno/pontuacao -> Calculando pontuação para o aluno");
+        NotaTotalResponse pontuacao = notaService.calcularNotaTotalAluno(token);
+        log.debug("GET /api/aluno/pontuacao -> Pontuação calculada: {}", pontuacao);
         return ResponseEntity.status(HttpStatus.OK).body(pontuacao);
     }
+
 
     //listarNotaDoAluno
     /**
@@ -133,11 +141,18 @@ public class NotaController {
      *
      * @return todas as notas criadas por aluno.
      */
-    @GetMapping("/aluno/lista/notas/{id}")
-    public ResponseEntity<List<NotaPorAlunoResponse>> listarNotaDoAluno(@PathVariable Long id) {
-        log.info("GET /api/notas -> Listando todas as notas por aluno");
-        List<NotaPorAlunoResponse> notas = notaService.listarNotaDoAluno(id);
-        log.debug("GET /api/notas -> Total de notas encontradas por aluno: {}", notas.size());
+    @GetMapping("/aluno/lista")
+    public ResponseEntity<List<NotaPorAlunoResponse>> listarNotaDoAluno(HttpServletRequest request) {
+        log.info("GET /api/notas/aluno/lista -> Listando todas as notas por aluno");
+        String token = request.getHeader("Authorization");
+
+        if (token != null && token.startsWith("Bearer ")) { // Remova o prefixo "Bearer " do token
+            token = token.substring(7);
+        }
+
+        List<NotaPorAlunoResponse> notas = notaService.listarNotaDoAluno(token);
+        log.debug("GET /api/notas/aluno/lista -> Total de notas: {}", notas.size());
         return ResponseEntity.status(HttpStatus.OK).body(notas);
     }
+
 }
