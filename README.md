@@ -1,14 +1,14 @@
-# Sistema Educacional
+# ScholarCore Engine
 
 ## Descrição
-O Sistema Educacional é uma API Rest back-end robusta desenvolvida em Java, utilizando o framework Spring Boot. Ela foi projetada para gerenciar eficientemente as operações acadêmicas de instituições de ensino, oferecendo uma solução completa para o gerenciamento de usuários, docentes, turmas, cursos, matérias e notas.
+O Sistema Educacional ScholarCore Engine é uma API Rest back-end robusta desenvolvida em Java, utilizando o framework Spring Boot. Ela foi projetada para gerenciar eficientemente as operações acadêmicas de instituições de ensino, oferecendo uma solução completa para o gerenciamento de usuários, docentes, turmas, cursos, matérias e notas.
 
 ## Tecnologias
 - **Java**: Linguagem de programação para o desenvolvimento back-end.
 - **Spring Boot**: Framework utilizado para a construção da API Rest.
 - **Spring Security**: Para adicionar controle de segurança.
 - **DTO**: Classes DTO para padronização das requisições e respostas.
-- **PostgreSQL**: Banco de dados utilizado, com suporte para Docker ou conexão direta.
+- **PostgreSQL**: Banco de dados utilizado
 - **GitFlow**: Estratégia de versionamento de código no GitHub.
 - **Trello**: Ferramenta para organização e gerenciamento de tarefas.
 
@@ -20,7 +20,7 @@ O sistema conta com diversas entidades, como `Papel`, `Usuário`, `Docente`, `Tu
 ![sistema-educacional](https://github.com/devleo-m/api-sistema-educacional/assets/149954966/056194a9-243e-4fe5-8d12-018a9c938829)
 
 ## Como Executar
-Para executar o Sistema Educacional, siga os passos abaixo:
+Para executar o sistema, siga os passos abaixo:
 1. Clone o repositório do projeto: https://github.com/devleo-m/api-sistema-educacional.git
 2. Configure o banco de dados PostgreSQL criando uma Database com o nome `sistema_educacional`
 
