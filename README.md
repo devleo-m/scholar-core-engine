@@ -21,7 +21,7 @@ O sistema conta com diversas entidades, como `Papel`, `Usuário`, `Docente`, `Tu
 
 ## Como Executar
 Para executar o sistema, siga os passos abaixo:
-1. Clone o repositório do projeto: https://github.com/devleo-m/api-sistema-educacional.git
+1. Clone o repositório do projeto: `https://github.com/devleo-m/scholar-core-engine.git`
 2. Configure o banco de dados PostgreSQL criando uma Database com o nome `sistema_educacional`
 
 ## Guia de Uso do Postman
